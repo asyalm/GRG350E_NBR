@@ -56,7 +56,7 @@ def Init_Csv(csv_out, header) :
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #  minor alts-- param finialization
 #  add a row to the csv
-def Append_Csv(csv_out, year,) :
+def Append_Csv(ba_csv, path, row, year, high, modhigh, modlow) :
     with open(csv_out, mode = "a") as csvfile :
         tabwriter = csv.writer(csvfile, delimiter = ',')
         outRow = ['testyeah', year]
@@ -106,7 +106,8 @@ def PolyRast_Conv(inpoly, field) : #  maybe outrast name as input
 #-------------------------------------------------
 #  normalized burn ratio 
 #  NBR = (Band 5 - Band 7)/(Band 5 + Band 7)
-#  input- bands 5 and 7 array files/ near infrared and shortwave infrared 
+#  input- bands 5 and 7 array files
+#  near infrared and shortwave infrared 
 #  output- array file
 def BurnRatio(b5, b7) :
     b5 = np.add(b5, 1)
@@ -152,13 +153,13 @@ def main() :
 
     
 #  calc total area 
-    tot_area = float(np.count_nonzero( band_arr[0] > -1 ) * 900)
+    tot_area = float(np.count_nonzero( bands_arr[0] > -1 ) * 900)
 
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #  initiate csv for individual burn area
-     ba_csv = 'burn_area.csv'
-     ba_header = ''
+    ba_csv = 'burn_area.csv'
+    ba_header = ''
 
 #  calculate burn index / individual burned area 
     burn_ind = []
@@ -175,13 +176,15 @@ def main() :
         Append_Csv(ba_csv, path, row, year, high, modhigh, modlow)
 
         burn_ind.append(barr)
-    print(" burn index list length:", len(burn_ind)) 
+        print(" burn ratio of {} completed:".format(name)) 
 
+
+    print(" burn ratio len:", len(burn_ind)) 
 
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 #  initiate csv for individual burn area
-     bc_csv = 'burncomp_area.csv'
-     bc_header = ''
+    bc_csv = 'burncomp_area.csv'
+    bc_header = ''
      
 #  compare burned areas between years
     burn_comp = []
@@ -198,6 +201,8 @@ def main() :
         Append_Csv(bc_csv, path, row, year, high, modhigh, modlow)
 
         burn_comp.append(bcomp)
+        print(" burn comparison of {} completed:".format(name + '19')) 
+
 
 
 #  need to reconvert back to a raster
